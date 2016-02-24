@@ -33,23 +33,23 @@ angular.module('tapGame', ['ionic', 'tapGame.controllers', 'tapGame.services'])
 
   // setup an abstract state for the tabs directive
     .state('home', {
-    url: '/',
-    templateUrl: 'templates/homescreen.html'
+
+      url: '/home',
+      templateUrl: 'templates/home.html',
+      controller: 'MainCtrl'
   })
+
+  // Each tab has its own nav history stack:
 
   .state('game', {
     url: '/game',
-    views: {
-      'game': {
-        templateUrl: 'templates/game.html',
-        controller: 'GameCtrl'
-      }
-    }
+    templateUrl: 'templates/game.html',
+    controller: 'GameCtrl'
   });
 
 
-
   // if none of the above states are matched, use this as the fallback
-  $urlRouterProvider.otherwise('/');
+
+  $urlRouterProvider.otherwise('/home');
 
 });
