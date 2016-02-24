@@ -1,6 +1,6 @@
-var game = new Phaser.Game(800, 600, Phaser.CANVAS, 'phaser-example', 
+var game = new Phaser.Game(800, 600, Phaser.AUTO, 'tap-game', 
     { 
-        _phaserIlluminated: null,
+        //_phaserIlluminated: null,
         preload: preload, 
         create: create, 
         update: update 
@@ -11,6 +11,7 @@ var game = new Phaser.Game(800, 600, Phaser.CANVAS, 'phaser-example',
 function preload() {
 
     game.load.image('rock', 'assets/rock.png');
+    game.load.image('block', 'assets/block.png');
     //game.load.image('background', 'assets/background.png');
     game.load.spritesheet('z', 'assets/z.png', 96, 96);
     game.load.image("light", "/assets/gfx/light.png");
@@ -18,19 +19,34 @@ function preload() {
 
 }
 
+
+
 var sprite;
 
 var player;
-var facing = 'left';
+var playerColRadius = 30;
+var dia = playerColRadius * 3;
+
+var facing = 'right';
 var jumpTimer = 0;
 var cursors;
 var jumpButton;
 var yAxis = p2.vec2.fromValues(0, 1);
-var colObjs = [];
-var myLamp1;
-var myLamp2;
+
+// var myLamp1;
+// var myLamp2;
 var myObj;
 var myObjs;
+
+var rectangles = [];
+var numColumns = 2;
+var rect;
+var maxBlockHeight = game.height - dia;
+var minBlockHeight = 96;
+var rangeBlockHeight = maxBlockHeight - minBlockHeight;
+var columnStep = (game.width + dia ) / numColumns; //distance between columns
+var blockPosY;
+
 
 function create() {
 
@@ -65,16 +81,10 @@ function create() {
     this.game.stage.backgroundColor = 0x4488cc;
 
 
-    //Background Back Layer
-    //bg0 = game.add.tileSprite(0, 0, 800, 600, 'background');
-    //Background Middle Layer
-    //bg1 = game.add.tileSprite(0, 0, 800, 600, 'background');
-    //Background Top Layer
 
-    //Player and Object Layer
 
-    //Front layer
-    ////bg0 = game.add.tileSprite(0, 0, 800, 600, 'background');
+    //Background Back
+    //bg = game.add.tileSprite(0, 0, 800, 600, 'background');
 
     //  Enable p2 physics
     game.physics.startSystem(Phaser.Physics.P2JS);
@@ -95,7 +105,7 @@ function create() {
     player.body.setCircle(30);
     player.body.fixedRotation = true;
     player.body.damping = 0.5;
-    player.body.onBeginContact.add(objHit, this);//Check for the block hitting another object
+    //player.body.static = true;
 
     var spriteMaterial = game.physics.p2.createMaterial('spriteMaterial', player.body);
     var worldMaterial = game.physics.p2.createMaterial('worldMaterial');
@@ -104,19 +114,53 @@ function create() {
     //  4 trues = the 4 faces of the world in left, right, top, bottom order
     game.physics.p2.setWorldMaterial(worldMaterial, true, true, true, true);
 
-    //  A stack of boxes - you'll stick to these
-    for (var i = 1; i < 4; i++)
-    {
-        var rock = game.add.sprite(300, 645 - (95 * i), 'rock');
-        rock.width = 100;
-        rock.height = 100;
+    
 
-        game.physics.p2.enable(rock);
-        rock.body.mass = 12;
-        rock.body.setCircle(40);
-        //rock.body.static = true;
-        rock.body.setMaterial(boxMaterial);
+    //Brick walls
+    for(var i=0; i<numColumns; i++){
+        console.log("Building Rectangle")
+
+        blockPosY = maxBlockHeight * Math.random() + dia;
+
+        blockHeight = rangeBlockHeight * Math.random() + minBlockHeight;
+        
+        //Add the sprite
+        rect = game.add.sprite(columnStep + columnStep * i, blockHeight, 'block')
+        
+        //Set random rect height
+        // rect.height = ;
+        
+        
+
+
+        //Add physics to block
+        game.physics.p2.enable(rect);
+        rect.body.static = true;
+        rect.body.setMaterial(boxMaterial);
+        rectangles.push(rect);
     }
+
+    // for(var i=0; i<numRects; i++){
+    //     console.log("Building Rectangle")
+    //     rectHeight = Math.random() * (height - 2 * minOpening);
+    //     rectY = Math.random() * (height - rectHeight - minOpening) + minOpening;
+    //     rectangles.push(new Phaser.Rectangle(width + rectStep * i, rectY, circleDia, rectHeight));
+    // }
+
+
+    //  A stack of boxes - you'll stick to these
+    // for (var i = 1; i < 4; i++)
+    // {
+    //     var rock = game.add.sprite(300, 645 - (95 * i), 'rock');
+    //     rock.width = 100;
+    //     rock.height = 100;
+
+    //     game.physics.p2.enable(rock);
+    //     rock.body.mass = 12;
+    //     rock.body.setCircle(40);
+    //     //rock.body.static = true;
+    //     rock.body.setMaterial(boxMaterial);
+    // }
 
     //  Here is the contact material. It's a combination of 2 materials, so whenever shapes with
     //  those 2 materials collide it uses the following settings.
@@ -134,10 +178,7 @@ function create() {
     
     cursors = game.input.keyboard.createCursorKeys();
     jumpButton = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
-
-    // this.pipeGenerator = this.game.time.events.loop(Phaser.Timer.SECOND * 1.25, this.generatePipes, this);
-    // this.pipeGenerator.timer.start();
-    
+    player.body.onBeginContact.add(objHit, this);//Check for the block hitting another object    
 
 }
 
@@ -171,57 +212,78 @@ function objHit (body, bodyB, shapeA, shapeB, equation) {
 
 function update() {
 
+    //
+
+     for(var i=0; i < numColumns; i++){
+            //rectangles[i].body.width
+            if (rectangles[i].x < -64) {
+
+                blockHeight = rangeBlockHeight * Math.random() + minBlockHeight;
+                blockPosY = maxBlockHeight * Math.random() + dia;
+
+                rectangles[i].body.sprite.height = blockHeight;
+                rectangles[i].body.x = game.width;
+                rectangles[i].body.y = blockHeight;
+                //rectangles[i].body.height = rectHeight;
+            }
+            else {
+                //rectangles[i].x -= 1;
+                rectangles[i].body.moveLeft(100);
+            }
+        }
+
+
+
         // myLamp1.refresh();
         // myLamp2.refresh();
         // //myMask.refresh();
         // myLamp1.y -= 0.5;
         // myLamp2.y += 0.5;
-    
-
-
 
 
 
     //NORMAL OPERATIONS
+    player.animations.play('right');
+    // if (cursors.left.isDown)
+    // {
+    //     player.body.moveLeft(200);
 
-    if (cursors.left.isDown)
-    {
-        player.body.moveLeft(200);
+    //     if (facing != 'left')
+    //     {
+    //         player.animations.play('left');
+    //         facing = 'left';
+    //     }
+    // }
+    // else if (cursors.right.isDown)
+    // {
+    //     player.body.moveRight(200);
 
-        if (facing != 'left')
-        {
-            player.animations.play('left');
-            facing = 'left';
-        }
-    }
-    else if (cursors.right.isDown)
-    {
-        player.body.moveRight(200);
+    //     if (facing != 'right')
+    //     {
+    //         player.animations.play('right');
+    //         facing = 'right';
+    //     }
+    // }
+    // else
+    // {
+    //     player.body.velocity.x = 0;
 
-        if (facing != 'right')
-        {
-            player.animations.play('right');
-            facing = 'right';
-        }
-    }
-    else
-    {
-        player.body.velocity.x = 0;
-
-        if (facing != 'idle')
-        {
-            //player.animations.stop();
-            player.animations.play('idle');
-            facing = 'idle';
-        }
-    }
+    //     if (facing != 'idle')
+    //     {
+    //         //player.animations.stop();
+    //         player.animations.play('idle');
+    //         facing = 'idle';
+    //     }
+    // }
     
     //&& checkIfCanJump()
-    if (jumpButton.isDown && game.time.now > jumpTimer)
-    {
-        player.body.moveUp(300);
-        jumpTimer = game.time.now + 750;
-    }
+    // if (jumpButton.isDown && game.time.now > jumpTimer)
+    // {
+    //     player.body.moveUp(300);
+    //     jumpTimer = game.time.now + 750;
+    // }
+
+    game.input.onTap.add(onTap, this);
 
 }
 
@@ -251,4 +313,31 @@ function checkIfCanJump() {
     
     return result;
 
+}
+
+
+function onTap(pointer, doubleTap) {
+
+    if (doubleTap)
+    {
+        // // //  They double-tapped, so swap the image
+        // // if (pic.key === 'TheEnd')
+        // // {
+        // //     pic.loadTexture('BountyHunter');
+        // // }
+        // else
+        // {
+        //     pic.loadTexture('TheEnd');
+        // }
+    }
+    else
+    {
+        //  A single tap (tap duration was < game.input.tapRate) so change alpha
+        //pic.alpha = (pic.alpha === 0.5) ? 1 : 0.5;
+        if (game.time.now > jumpTimer)
+        {
+            player.body.moveUp(300);
+            jumpTimer = game.time.now + 750;
+        }
+    }
 }
