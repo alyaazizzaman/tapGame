@@ -1,1 +1,6 @@
-/* Empty. Add your own CSS if you like */
+/***** Home Screen *****/
+
+.homeCol {
+	text-align: center;
+	vertical-align: middle;
+}
