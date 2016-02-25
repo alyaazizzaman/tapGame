@@ -1,4 +1,14 @@
-var game = new Phaser.Game(window.innerWidth * window.devicePixelRatio, window.innerHeight * window.devicePixelRatio, Phaser.AUTO, 'tap-game', 
+'use strict';
+
+(function() {
+
+	var gameMod = angular.module('gameMod', []);
+
+	gameMod.service(function() {
+
+		this.gameCode = function() {
+
+			var game = new Phaser.Game(window.innerWidth * window.devicePixelRatio, window.innerHeight * window.devicePixelRatio, Phaser.AUTO, 'tap-game', 
    { 
        //_phaserIlluminated: null,
        preload: preload,
@@ -391,3 +401,7 @@ function onTap(pointer, doubleTap) {
        }
    }
 }
+		};
+	});
+
+})();
