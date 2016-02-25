@@ -43,7 +43,8 @@ angular.module('tapGame', ['ionic', 'tapGame.controllers', 'tapGame.services'])
   .state('game', {
     url: '/game',
     templateUrl: 'templates/game.html',
-    controller: 'GameCtrl'
+    controller: 'GameCtrl',
+    controllerAs : 'GC'
   });
 
 
