@@ -54,6 +54,14 @@ angular.module('tapGame', ['ionic', 'tapGame.controllers', 'tapGame.services'])
     templateUrl: 'templates/signUp.html',
     controller: 'MainCtrl',
     controllerAs : 'MC'
+  })
+  
+  .state('high-scores', {
+    url: '/high-scores',
+    templateUrl: 'templates/high-scores.html',
+    controller: 'GameCtrl',
+    controllerAs: 'GC'
+
   });
 
 

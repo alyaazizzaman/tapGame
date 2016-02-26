@@ -24,7 +24,19 @@ a {
 .title {
 	font-family: 'KarmaFuture';
 	color: white;
-	font-size: 3rem;
+	font-size: 3.5rem;
+}
+
+.scoreTitle {
+	font-family: 'KarmaFuture';
+	color: white;
+	font-size: 2rem;
+}
+
+.scores {
+	font-family: 'Press Start 2P';
+	font-size: .75rem;
+	color: rgb(81, 122, 245);
 }
 .copyright {
 	font-family: 'Press Start 2P';
