@@ -20,18 +20,22 @@ html{
 .title {
 	font-family: 'KarmaFuture';
 	color: white;
-	font-size: 2.2rem;
+	font-size: 3rem;
 }
 .copyright {
 	font-family: 'Press Start 2P';
-	font-size: .25rem;
+	font-size: .3rem;
 	color: white;
 }
 .birds {
-	width: 120%;
+	width: 95%;
 }
 .play {
-	color: rgb(206, 191, 43);
+	color: rgb(242, 201, 0);
+}
+.button {
+	font-family: "Press Start 2P";
+	font-size: .5rem
 }
 @font-face{
 	font-family: 'KarmaFuture';
