@@ -1,14 +1,14 @@
 var game = new Phaser.Game(400, 490, Phaser.AUTO, 'tap-game');
 
-var mainState = { 
-        
-        preload: preload, 
-        create: create, 
+var mainState = {
+
+        preload: preload,
+        create: create,
         update: update
     };
 
-    game.state.add('main', mainState);  
-    game.state.start('main');  
+    game.state.add('main', mainState);
+    game.state.start('main');
 
 function preload() {
 
@@ -27,7 +27,7 @@ function preload() {
 
 var scaleRatio = window.devicePixelRatio/3;
 function scaleStage(){
-    
+
 
         game.input.maxPointers = 1;
         game.stage.disableVisibilityChange = true;
@@ -52,24 +52,24 @@ function scaleStage(){
         // }
 
 
-    // if (game.device.desktop)        
+    // if (game.device.desktop)
     // {
-        //game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;            
-        // game.scale.minWidth = window.innerWidth;        
+        //game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
+        // game.scale.minWidth = window.innerWidth;
         // game.scale.minHeight = window.innerHeight;
 
         var width = (window.innerWidth > 0) ? window.innerWidth: screen.width;
         var height = (window.innerHeight > 0) ? window.innerHeight: screen.height;
 
-        game.scale.minWidth = width;        
+        game.scale.minWidth = width;
         game.scale.minHeight = height;
-                    
-        // game.scale.maxWidth = window.innerWidth * window.devicePixelRatio; //game.width;            
-        // game.scale.maxHeight = window.innerHeight * window.devicePixelRatio;//game.height;            
-        // game.scale.pageAlignHorizontally = true;            
+
+        // game.scale.maxWidth = window.innerWidth * window.devicePixelRatio; //game.width;
+        // game.scale.maxHeight = window.innerHeight * window.devicePixelRatio;//game.height;
+        // game.scale.pageAlignHorizontally = true;
         // game.scale.pageAlignVertically = true;
-        // scaleRatio = window.devicePixelRatio;    
-        //game.scale.setScreenSize(true);       
+        // scaleRatio = window.devicePixelRatio;
+        //game.scale.setScreenSize(true);
     // } else {
     //     game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
     //     game.scale.minWidth = 400;
@@ -96,8 +96,6 @@ function scaleStage(){
     // //The css for body includes 1px top margin, I believe this is the cause for this -1
     // document.getElementById("tap-game").style.overflow = "hidden";
 }
-
-
 
 
 var player;
@@ -127,25 +125,25 @@ function create() {
 
     // Display the bird on the screen
     player = game.add.sprite(game.width/2-100, game.height/2, 'bird');
-    player.anchor.setTo(-0.2, 0.5); 
+    player.anchor.setTo(-0.2, 0.5);
 
     // Add gravity to the bird to make it fall
     game.physics.arcade.enable(player);
     player.body.gravity.y = 1000;
-    pipes = game.add.group(); // Create a group  
-    pipes.enableBody = true;  // Add physics to the group  
-    pipes.createMultiple(20, 'pipe'); // Create 20 pipes     
+    pipes = game.add.group(); // Create a group
+    pipes.enableBody = true;  // Add physics to the group
+    pipes.createMultiple(20, 'pipe'); // Create 20 pipes
     player.animations.play('right');
 
-    //jumpSound = game.add.audio('jump');  
+    //jumpSound = game.add.audio('jump');
 
 
     timer = game.time.events.loop(1500, addRowOfPipes, this);
-    labelScore = game.add.text(game.width/2, 20, "0", { font: "30px Arial", fill: "#ffffff" }); 
+    labelScore = game.add.text(game.width/2, 20, "0", { font: "30px Arial", fill: "#ffffff" });
 
 }
 
-function addOnePipe(x, y) {  
+function addOnePipe(x, y) {
     // Get the first dead pipe of our group
     var pipe = pipes.getFirstDead();
 
@@ -153,18 +151,16 @@ function addOnePipe(x, y) {
     pipe.reset(x, y);
 
     // Add velocity to the pipe to make it move left
-    pipe.body.velocity.x = -175; 
-
-    // Kill the pipe when it's no longer visible 
+    pipe.body.velocity.x = -175;
     pipe.checkWorldBounds = true;
     pipe.outOfBoundsKill = true;
 }
 
-function addRowOfPipes() {  
+function addRowOfPipes() {
     // Pick where the hole will be
     var hole = Math.floor(Math.random() * 5) + 1;
 
-    // Add the 6 pipes 
+    // Add the 6 pipes
     for (var i = 0; i < 8; i++) {
         if (i != hole && i != hole + 1) {
             addOnePipe(400, i * 60 + 10);
@@ -174,7 +170,7 @@ function addRowOfPipes() {
 
     score += 1;
     if(score > 0){
-        labelScore.text = score; 
+        labelScore.text = score;
     }
 }
 
@@ -185,7 +181,7 @@ function update() {
 
     game.physics.arcade.overlap(player, pipes, restartGame, null, this);
 
-    if (player.angle < 20)  
+    if (player.angle < 20)
     player.angle += 1;
 
      if (player.inWorld == false)
@@ -199,16 +195,17 @@ function update() {
 
 function onTap(pointer) {
 
-        if (player.alive == false)  
+        if (player.alive == false)
         return;
 
-        //jumpSound.play();  
 
-        game.add.tween(player).to({angle: -20}, 100).start(); 
+        //jumpSound.play();
+
+        game.add.tween(player).to({angle: -20}, 100).start();
         player.body.velocity.y = -350;
 }
 
-function hitPipe() {  
+function hitPipe() {
     // If the bird has already hit a pipe, we have nothing to do
     if (player.alive == false)
         return;
@@ -227,8 +224,9 @@ function hitPipe() {
 
 
 // Restart the game
-function restartGame(){ 
+function restartGame(){
     labelScore = 0;
     score = -1;
     game.state.start('main');
+
 }

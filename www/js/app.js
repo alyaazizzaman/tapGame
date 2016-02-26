@@ -49,6 +49,7 @@ angular.module('tapGame', ['ionic', 'tapGame.controllers', 'tapGame.services'])
   });
 
 
+
   // if none of the above states are matched, use this as the fallback
 
   $urlRouterProvider.otherwise('/home');
