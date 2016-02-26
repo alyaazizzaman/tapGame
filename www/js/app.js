@@ -46,6 +46,13 @@ angular.module('tapGame', ['ionic', 'tapGame.controllers', 'tapGame.services'])
     templateUrl: 'templates/game.html',
     controller: 'GameCtrl',
     controllerAs : 'GC'
+  })
+
+  .state('high-scores', {
+    url: '/high-scores',
+    templateUrl: 'templates/high-scores.html',
+    controller: 'GameCtrl',
+    controllerAs: 'GC'
   });
 
 
