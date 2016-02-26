@@ -3,9 +3,21 @@
 
 angular.module('tapGame.controllers', ['ionic'])
 
-.controller('MainCtrl', function($scope) {
+.controller('MainCtrl', function($scope, $http) {
 
+	var vm = this;
 
+	vm.signUp = function(userName, email, password) {
+		$http({
+			url : 'http://localhost:3000/users',
+			method: 'POST',
+			data : {
+				"user_name" : userName,
+				"email" : email,
+				"password" : password
+			}
+		});
+	};
 })
 
 .controller('GameCtrl', function($scope) {

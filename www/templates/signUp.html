@@ -1,0 +1,19 @@
+<h1>Sign Up</h1>
+
+<div class="list">
+  <label class="item item-input item-stacked-label">
+    <span class="input-label">User Tag</span>
+    <input type="text" ng-model='MC.user_name' placeholder="FB">
+  </label>
+  <label class="item item-input item-stacked-label">
+    <span class="input-label">Email</span>
+    <input type="email" ng-model='MC.email' placeholder="floppy@nutts.com">
+  </label>
+  <label class="item item-input item-stacked-label">
+    <span class="input-label">Password</span>
+    <input type="password" ng-model='MC.password' placeholder="">
+  </label>
+  <button ng-click='MC.signUp(MC.user_name, MC.email, MC.password)'class="button button-block button-positive">
+  	Sign Up
+	</button>
+</div>

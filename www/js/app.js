@@ -36,7 +36,8 @@ angular.module('tapGame', ['ionic', 'tapGame.controllers', 'tapGame.services'])
 
       url: '/home',
       templateUrl: 'templates/home.html',
-      controller: 'MainCtrl'
+      controller: 'MainCtrl',
+      controllerAs: 'MC'
   })
 
   // Each tab has its own nav history stack:
@@ -46,6 +47,13 @@ angular.module('tapGame', ['ionic', 'tapGame.controllers', 'tapGame.services'])
     templateUrl: 'templates/game.html',
     controller: 'GameCtrl',
     controllerAs : 'GC'
+  })
+
+  .state('signUp', {
+    url: '/signUp',
+    templateUrl: 'templates/signUp.html',
+    controller: 'MainCtrl',
+    controllerAs : 'MC'
   });
 
 
