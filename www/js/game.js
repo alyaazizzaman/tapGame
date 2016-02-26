@@ -1,393 +1,234 @@
-var game = new Phaser.Game(window.innerWidth * window.devicePixelRatio, window.innerHeight * window.devicePixelRatio, Phaser.AUTO, 'tap-game', 
-   { 
-       //_phaserIlluminated: null,
-       preload: preload,
+var game = new Phaser.Game(400, 490, Phaser.AUTO, 'tap-game');
 
-       create: create, 
-       update: update 
-   });
+var mainState = { 
+        
+        preload: preload, 
+        create: create, 
+        update: update
+    };
 
-
+    game.state.add('main', mainState);  
+    game.state.start('main');  
 
 function preload() {
 
-   game.load.image('rock', 'assets/rock.png');
-   game.load.image('block', 'assets/block.png');
-   //game.load.image('background', 'assets/background.png');
-   game.load.spritesheet('z', 'assets/z.png', 96, 96);
-   game.load.image("light", "/assets/gfx/light.png");
-   
+    scaleStage();
+
+    game.load.image('background', 'assets/background.png');
+    game.load.image('ground', 'assets/ground.png');
+    game.load.image('pipe', 'assets/pipe.png');
+    game.load.spritesheet('bird', 'assets/floppy.png', 48, 32);
+
+    //sounds
+    //game.load.audio('jump', 'assets/jump.wav');
 
 }
 
-//WINDOW SCALING
-var scaleRatio = window.devicePixelRatio / 3;
+
+var scaleRatio = window.devicePixelRatio/3;
+function scaleStage(){
+    
+
+        game.input.maxPointers = 1;
+        game.stage.disableVisibilityChange = true;
+
+        // if (game.device.desktop)
+        // {
+        //     game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
+        //     game.scale.setMinMax(260, 480, 768, 1024);
+        //     game.scale.pageAlignHorizontally = true;
+        //     game.scale.pageAlignVertically = true;
+        // }
+        // else
+        // {
+        //     game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
+        //     game.scale.setMinMax(260, 480, 768, 1024);
+        //     game.scale.pageAlignHorizontally = true;
+        //     game.scale.pageAlignVertically = true;
+        //     game.scale.forceOrientation(false, true);
+        //     game.scale.setResizeCallback(game.gameResized, game);
+        //     game.scale.enterIncorrectOrientation.add(game.enterIncorrectOrientation, game);
+        //     game.scale.leaveIncorrectOrientation.add(game.leaveIncorrectOrientation, game);
+        // }
 
 
-//PLAYER VARIABLES
-var sprite;
+    // if (game.device.desktop)        
+    // {
+        //game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;            
+        // game.scale.minWidth = window.innerWidth;        
+        // game.scale.minHeight = window.innerHeight;
+
+        var width = (window.innerWidth > 0) ? window.innerWidth: screen.width;
+        var height = (window.innerHeight > 0) ? window.innerHeight: screen.height;
+
+        game.scale.minWidth = width;        
+        game.scale.minHeight = height;
+                    
+        // game.scale.maxWidth = window.innerWidth * window.devicePixelRatio; //game.width;            
+        // game.scale.maxHeight = window.innerHeight * window.devicePixelRatio;//game.height;            
+        // game.scale.pageAlignHorizontally = true;            
+        // game.scale.pageAlignVertically = true;
+        // scaleRatio = window.devicePixelRatio;    
+        //game.scale.setScreenSize(true);       
+    // } else {
+    //     game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
+    //     game.scale.minWidth = 400;
+    //     game.scale.minHeight = 490;
+    //     game.scale.maxWidth = 1334;
+    //     game.scale.maxHeight = 750;
+    //     game.scale.forceLandscape = false;
+    //     game.scale.pageAlignHorizontally = false;
+    //     var scaleRatio = window.devicePixelRatio/2;
+    // }
+
+
+    var ow = parseInt(game.canvas.style.width,10);
+    var oh = parseInt(game.canvas.style.height,10);
+    var r = Math.max(window.innerWidth/ow,window.innerHeight/oh);
+    var nw = ow*r;var nh = oh*r;
+    game.canvas.style.width = nw+"px";
+    game.canvas.style.height= nh+"px";
+    game.canvas.style.marginLeft = (window.innerWidth/2 - nw/2)+"px";
+    game.canvas.style.marginTop = (window.innerHeight/2 - nh/2)+"px";
+    document.getElementById("tap-game").style.width = window.innerWidth+"px";
+    document.getElementById("tap-game").style.height = window.innerHeight-1+"px";
+
+    // //The css for body includes 1px top margin, I believe this is the cause for this -1
+    // document.getElementById("tap-game").style.overflow = "hidden";
+}
+
+
+
+
 var player;
-var playerColRadius = 30;
-var dia = playerColRadius * 3;
-var facing = 'right';
-var jumpTimer = 0;
-var cursors;
-var jumpButton;
-var yAxis = p2.vec2.fromValues(0, 1);
-
-//MOBILE CONTROLS
-var swipeCoordX,        
-swipeCoordY,        
-swipeCoordX2,        
-swipeCoordY2,        
-swipeMinDistance = 100;
-
-
-// var myLamp1;
-// var myLamp2;
-var myObj;
-var myObjs;
-
-var rectangles = [];
-var numColumns = 2;
-var rect;
-var maxBlockHeight = game.height - dia;
-var minBlockHeight = 96;
-var rangeBlockHeight = maxBlockHeight - minBlockHeight;
-var columnStep = (game.width + dia ) / numColumns; //distance between columns
-var blockPosY;
-
+var pipe;
+var pipes;
+var colNum;
+var background;
+var labelScore;
+var score = -1;
+var timer;
+var jumpSound;
+var ground;
 
 function create() {
 
-       //game.world.setBounds(0, 0, 2000, 2000);
+    background = game.add.tileSprite(0, 0, 500, 500, 'background');
+    ground = game.add.tileSprite(0, game.height-75, 500, 500, "ground");
 
-       //initialize the phaser-illuminated object and functions
-      //  game.plugins.add(Phaser.Plugin.PhaserIlluminated);
+    game.physics.startSystem(Phaser.Physics.ARCADE);
 
-      //  myBackgroundBmd = game.add.bitmapData(game.width, game.height);
-      //  myBackgroundBmd.ctx.fillStyle = "#333333";
-      //  myBackgroundBmd.ctx.fillRect(0, 0, game.width, game.height);
-      //  game.cache.addBitmapData('background', myBackgroundBmd);
-      //  myBackgroundSprite = game.add.sprite(0, 0, myBackgroundBmd);
+    //  Set the world (global) gravity
+    game.physics.arcade.gravity.y = 100;
 
-      //  //add a lamp to the game
-      //  myLamp1 = game.add.illuminated.lamp(0, 0);
-      //  //myMask = game.add.illuminated.darkMask();
-      //  console.log("LAMP: ", myLamp1);
+    //  Add a sprite
+    // Set the physics system
+    game.physics.startSystem(Phaser.Physics.ARCADE);
 
-      //  myLamp2 = game.add.illuminated.lamp(0, 0);
-      //  //myMask.bringToTop();
-      //  //myMask.addLampSprite(myLamp2);
+    // Display the bird on the screen
+    player = game.add.sprite(game.width/2-100, game.height/2, 'bird');
+    player.anchor.setTo(-0.2, 0.5); 
 
-      //  myObj = game.add.illuminated.polygonObject([{x: 10, y: 200}, {x: 300, y: 200}, {x: 150, y: 300}]);
-      // // myObj2 = game.add.illuminated.rectangleObject(250, 160, 40, 40);
-      //  //myObj3 = game.add.illuminated.rectangleObject (80, 180, 40, 40);
-      //  myObjs = [myObj];
-      //  myLamp2.createLighting(myObjs);
-      //  myLamp1.createLighting(myObjs);
+    // Add gravity to the bird to make it fall
+    game.physics.arcade.enable(player);
+    player.body.gravity.y = 1000;
+    pipes = game.add.group(); // Create a group  
+    pipes.enableBody = true;  // Add physics to the group  
+    pipes.createMultiple(20, 'pipe'); // Create 20 pipes     
+    player.animations.play('right');
 
-
-   this.game.stage.backgroundColor = 0x4488cc;
+    //jumpSound = game.add.audio('jump');  
 
 
-
-
-   //Background Back
-   //bg = game.add.tileSprite(0, 0, 800, 600, 'background');
-
-   //  Enable p2 physics
-   game.physics.startSystem(Phaser.Physics.P2JS);
-
-   game.physics.p2.gravity.y = 350;
-   game.physics.p2.world.defaultContactMaterial.friction = 0.3;
-   game.physics.p2.world.setGlobalStiffness(1e5);
-
-   //  Add a sprite
-   player = game.add.sprite(200, 400, 'z');
-   player.scale.setTo(scaleRatio, scaleRatio)
-   player.animations.add('left', [0, 1, 2, 3, 4, 5], 7, true);
-   player.animations.add('idle', [6, 7, 8, 9, 10, 11], 7, true);
-   player.animations.add('right', [12, 13, 14, 15, 16, 17], 7, true);
-
-   //  Enable if for physics. This creates a default rectangular body.
-   game.physics.p2.enable(player);
-
-   player.body.setCircle(30);
-   player.body.fixedRotation = true;
-   player.body.damping = 0.5;
-   //player.body.static = true;
-
-   var spriteMaterial = game.physics.p2.createMaterial('spriteMaterial', player.body);
-   var worldMaterial = game.physics.p2.createMaterial('worldMaterial');
-   var boxMaterial = game.physics.p2.createMaterial('worldMaterial');
-
-   //  4 trues = the 4 faces of the world in left, right, top, bottom order
-   game.physics.p2.setWorldMaterial(worldMaterial, true, true, true, true);
-
-   
-
-   //Brick walls
-   for(var i=0; i<numColumns; i++){
-       console.log("Building Rectangle")
-
-       blockPosY = maxBlockHeight * Math.random() + dia;
-
-       blockHeight = rangeBlockHeight * Math.random() + minBlockHeight;
-       
-       //Add the sprite
-       rect = game.add.sprite(columnStep + columnStep * i, blockHeight, 'block')
-       rect.scale.setTo(scaleRatio, scaleRatio)
-       //Set random rect height
-       // rect.height = ;
-       
-       
-
-
-       //Add physics to block
-       game.physics.p2.enable(rect);
-       rect.body.static = true;
-       //rect.body.scale.setTo(scaleRatio, scaleRatio);
-       rect.body.setMaterial(boxMaterial);
-       rectangles.push(rect);
-   }
-
-   // for(var i=0; i<numRects; i++){
-   //     console.log("Building Rectangle")
-   //     rectHeight = Math.random() * (height - 2 * minOpening);
-   //     rectY = Math.random() * (height - rectHeight - minOpening) + minOpening;
-   //     rectangles.push(new Phaser.Rectangle(width + rectStep * i, rectY, circleDia, rectHeight));
-   // }
-
-
-   //  A stack of boxes - you'll stick to these
-   // for (var i = 1; i < 4; i++)
-   // {
-   //     var rock = game.add.sprite(300, 645 - (95 * i), 'rock');
-   //     rock.width = 100;
-   //     rock.height = 100;
-
-   //     game.physics.p2.enable(rock);
-   //     rock.body.mass = 12;
-   //     rock.body.setCircle(40);
-   //     //rock.body.static = true;
-   //     rock.body.setMaterial(boxMaterial);
-   // }
-
-   //  Here is the contact material. It's a combination of 2 materials, so whenever shapes with
-   //  those 2 materials collide it uses the following settings.
-   var groundPlayerCM = game.physics.p2.createContactMaterial(spriteMaterial, worldMaterial, { friction: 0.0 });
-   var groundBoxesCM = game.physics.p2.createContactMaterial(worldMaterial, boxMaterial, { friction: 0.6 });
-
-   //  Here are some more options you can set:
-   // contactMaterial.friction = 0.0;     // Friction to use in the contact of these two materials.
-   // contactMaterial.restitution = 0.0;  // Restitution (i.e. how bouncy it is!) to use in the contact of these two materials.
-   // contactMaterial.stiffness = 1e3;    // Stiffness of the resulting ContactEquation that this ContactMaterial generate.
-   // contactMaterial.relaxation = 0;     // Relaxation of the resulting ContactEquation that this ContactMaterial generate.
-   // contactMaterial.frictionStiffness = 1e7;    // Stiffness of the resulting FrictionEquation that this ContactMaterial generate.
-   // contactMaterial.frictionRelaxation = 3;     // Relaxation of the resulting FrictionEquation that this ContactMaterial generate.
-   // contactMaterial.surfaceVelocity = 0.0;        // Will add surface velocity to this material. If bodyA rests on top if bodyB, and the surface velocity is positive, bodyA will slide to the right.
-   
-   cursors = game.input.keyboard.createCursorKeys();
-   jumpButton = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
-   player.body.onBeginContact.add(objHit, this);//Check for the block hitting another object    
+    timer = game.time.events.loop(1500, addRowOfPipes, this);
+    labelScore = game.add.text(game.width/2, 20, "0", { font: "30px Arial", fill: "#ffffff" }); 
 
 }
 
-function objHit (body, bodyB, shapeA, shapeB, equation) {
+function addOnePipe(x, y) {  
+    // Get the first dead pipe of our group
+    var pipe = pipes.getFirstDead();
 
-   //  The block hit something.
-   //  
-   //  This callback is sent 5 arguments:
-   //  
-   //  The Phaser.Physics.P2.Body it is in contact with. ​*This might be null*​ if the Body was created directly in the p2 world.
-   //  The p2.Body this Body is in contact with.
-   //  The Shape from this body that caused the contact.
-   //  The Shape from the contact body.
-   //  The Contact Equation data array.
-   //  
-   //  The first argument may be null or not have a sprite property, such as when you hit the world bounds.
-   if (body)
-   {
-       result = 'You last hit: ' + body.sprite.key;
+    // Set the new position of the pipe
+    pipe.reset(x, y);
 
-   }
-   else
-   {
-       result = 'You last hit: The wall :)';
-   }
+    // Add velocity to the pipe to make it move left
+    pipe.body.velocity.x = -175; 
 
-   //console.log('result:', result);
+    // Kill the pipe when it's no longer visible 
+    pipe.checkWorldBounds = true;
+    pipe.outOfBoundsKill = true;
 }
 
+function addRowOfPipes() {  
+    // Pick where the hole will be
+    var hole = Math.floor(Math.random() * 5) + 1;
+
+    // Add the 6 pipes 
+    for (var i = 0; i < 8; i++) {
+        if (i != hole && i != hole + 1) {
+            addOnePipe(400, i * 60 + 10);
+        }
+    }
+
+
+    score += 1;
+    if(score > 0){
+        labelScore.text = score; 
+    }
+}
 
 
 function update() {
+    console.log(ground);
+    ground.tilePosition.x -= 2.8;
 
-   //
+    game.physics.arcade.overlap(player, pipes, restartGame, null, this);
 
-    for(var i=0; i < numColumns; i++){
-           //rectangles[i].body.width
-           if (rectangles[i].x < -64) {
+    if (player.angle < 20)  
+    player.angle += 1;
 
-               blockHeight = rangeBlockHeight * Math.random() + minBlockHeight;
-               blockPosY = maxBlockHeight * Math.random() + dia;
+     if (player.inWorld == false)
+        restartGame();
 
-               rectangles[i].body.sprite.height = blockHeight;
-               rectangles[i].body.x = game.width;
-               rectangles[i].body.y = blockHeight;
-               //rectangles[i].body.height = rectHeight;
-           }
-           else {
-               //rectangles[i].x -= 1;
-               rectangles[i].body.moveLeft(100);
-           }
-       }
-
-
-
-       // myLamp1.refresh();
-       // myLamp2.refresh();
-       // //myMask.refresh();
-       // myLamp1.y -= 0.5;
-       // myLamp2.y += 0.5;
-
-
-
-   //NORMAL OPERATIONS
-   player.animations.play('right');
-   // if (cursors.left.isDown)
-   // {
-   //     player.body.moveLeft(200);
-
-   //     if (facing != 'left')
-   //     {
-   //         player.animations.play('left');
-   //         facing = 'left';
-   //     }
-   // }
-   // else if (cursors.right.isDown)
-   // {
-   //     player.body.moveRight(200);
-
-   //     if (facing != 'right')
-   //     {
-   //         player.animations.play('right');
-   //         facing = 'right';
-   //     }
-   // }
-   // else
-   // {
-   //     player.body.velocity.x = 0;
-
-   //     if (facing != 'idle')
-   //     {
-   //         //player.animations.stop();
-   //         player.animations.play('idle');
-   //         facing = 'idle';
-   //     }
-   // }
-   
-   //&& checkIfCanJump()
-   // if (jumpButton.isDown && game.time.now > jumpTimer)
-   // {
-   //     player.body.moveUp(300);
-   //     jumpTimer = game.time.now + 750;
-   // }
-
-   
-   game.input.onDown.add(function(pointer) {        
-       swipeCoordX = pointer.clientX;        
-       swipeCoordY = pointer.clientY;        
-   }, this);    
-
-   game.input.onUp.add(function(pointer) {        
-       swipeCoordX2 = pointer.clientX;        
-       swipeCoordY2 = pointer.clientY;        
-       if(swipeCoordX2 < swipeCoordX - swipeMinDistance){            
-           //console.log("left");       
-           alert("LEFT");
-           player.body.moveLeft(200);
-
-           if (facing != 'left')
-           {
-               player.animations.play('left');
-               facing = 'left';
-           }
-
-       }else if(swipeCoordX2 > swipeCoordX + swipeMinDistance){            
-           //console.log("right");        
-           alert("RIGHT");
-       }else if(swipeCoordY2 < swipeCoordY - swipeMinDistance){            
-           //console.log("up");        
-           alert("UP");
-       }else if(swipeCoordY2 > swipeCoordY + swipeMinDistance){            
-           console.log("down"); 
-           alert("DOWN");       
-       }    
-   }, this);  
-
-
-   //Jump Functionality
-   game.input.onTap.add(onTap, this);
-
-
-
-
-
-}
-
-function checkIfCanJump() {
-
-   var result = false;
-
-   for (var i=0; i < game.physics.p2.world.narrowphase.contactEquations.length; i++)
-   {
-       var c = game.physics.p2.world.narrowphase.contactEquations[i];
-
-       if (c.bodyA === player.body.data || c.bodyB === player.body.data)
-       {
-           var d = p2.vec2.dot(c.normalA, yAxis);
-
-           if (c.bodyA === player.body.data)
-           {
-               d *= -1;
-           }
-
-           if (d > 0.5)
-           {
-               result = true;
-           }
-       }
-   }
-   
-   return result;
-
+    //TAP
+    game.input.onTap.add(onTap, this);
 }
 
 
-function onTap(pointer, doubleTap) {
 
-   if (doubleTap)
-   {
-       // // //  They double-tapped, so swap the image
-       // // if (pic.key === 'TheEnd')
-       // // {
-       // //     pic.loadTexture('BountyHunter');
-       // // }
-       // else
-       // {
-       //     pic.loadTexture('TheEnd');
-       // }
-   }
-   else
-   {
-       //  A single tap (tap duration was < game.input.tapRate) so change alpha
-       //pic.alpha = (pic.alpha === 0.5) ? 1 : 0.5;
-       if (game.time.now > jumpTimer)
-       {
-           player.body.moveUp(700);
-           jumpTimer = game.time.now + 750;
-       }
-   }
+function onTap(pointer) {
+
+        if (player.alive == false)  
+        return;
+
+        //jumpSound.play();  
+
+        game.add.tween(player).to({angle: -20}, 100).start(); 
+        player.body.velocity.y = -350;
+}
+
+function hitPipe() {  
+    // If the bird has already hit a pipe, we have nothing to do
+    if (player.alive == false)
+        return;
+
+    // Set the alive property of the bird to false
+    player.alive = false;
+
+    // Prevent new pipes from appearing
+    game.time.events.remove(timer);
+
+    // Go through all the pipes, and stop their movement
+    this.pipes.forEachAlive(function(p){
+        p.body.velocity.x = 0;
+    }, this);
+}
+
+
+// Restart the game
+function restartGame(){ 
+    labelScore = 0;
+    score = -1;
+    game.state.start('main');
 }
