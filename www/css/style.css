@@ -5,6 +5,10 @@ html{
 	font-size: 16px;
 }
 
+a {
+	text-decoration:none
+}
+
 .homeCol {
 	text-align: center;
 	vertical-align: middle;
