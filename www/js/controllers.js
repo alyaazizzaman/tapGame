@@ -1,4 +1,6 @@
 
+'use strict';
+
 angular.module('tapGame.controllers', ['ionic'])
 
 .controller('MainCtrl', function($scope) {
@@ -14,5 +16,6 @@ angular.module('tapGame.controllers', ['ionic'])
   //
   //$scope.$on('$ionicView.enter', function(e) {
   //});
+
 
 });
