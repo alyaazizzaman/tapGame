@@ -1,6 +1,42 @@
 /***** Home Screen *****/
 
+html{
+	font-size: 16px;
+}
+
 .homeCol {
 	text-align: center;
 	vertical-align: middle;
+}
+
+.homescreen {
+	background-image: url('../img/bg.png');
+	background-repeat: no-repeat;
+	background-size: cover;
+	/*background-color: red;*/
+}
+
+.title {
+	font-family: 'KarmaFuture';
+	color: white;
+	font-size: 2.2rem;
+}
+.copyright {
+	font-family: 'Press Start 2P';
+	font-size: .25rem;
+	color: white;
+}
+.birds {
+	width: 120%;
+}
+.play {
+	color: rgb(206, 191, 43);
+}
+@font-face{
+	font-family: 'KarmaFuture';
+	src: url('../fonts/karma/karmafuture-webfont.eot');
+	src: url('../fonts/karma/karmafuture-webfont.eot?#iefix') format('embedded-opentype'),
+	     url('../fonts/karma/karmafuture-webfont.woff') format('woff'),
+	     url('../fonts/karma/karmafuture-webfont.ttf') format('truetype'),
+	     url('../fonts/karma/karmafuture-webfont.svg#webfont') format('svg');
 }

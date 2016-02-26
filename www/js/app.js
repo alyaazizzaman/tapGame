@@ -44,7 +44,7 @@ angular.module('tapGame', ['ionic', 'tapGame.controllers', 'tapGame.services'])
     url: '/game',
     templateUrl: 'templates/game.html',
     controller: 'GameCtrl'
-  });
+  })
 
 
   // if none of the above states are matched, use this as the fallback
