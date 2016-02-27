@@ -1,4 +1,3 @@
-
 'use strict';
 
 angular.module('tapGame.controllers', ['ionic'])
@@ -8,14 +7,24 @@ angular.module('tapGame.controllers', ['ionic'])
 
 })
 
-.controller('GameCtrl', function($scope) {
-  // With the new view caching in Ionic, Controllers are only called
-  // when they are recreated or on app start, instead of every page change.
-  // To listen for when this page is active (for example, to refresh data),
-  // listen for the $ionicView.enter event:
-  //
-  //$scope.$on('$ionicView.enter', function(e) {
-  //});
+.controller('GameCtrl', function($scope, $http) {
+  var vm = this;
 
+  vm.getHighScores = function(){
+    $http({
+      method: 'GET',
+      url: 'http://localhost:3000/users/highscores'
+    }).then(function successCallback(response) {
+      console.log(response.data);
+      vm.highscores = response.data;
+      // this callback will be called asynchronously
+      // when the response is available
+    }, function errorCallback(response) {
+      // called asynchronously if an error occurs
+      // or server returns response with an error status.
+    });
+  };
+
+  vm.highscores;
 
 });
