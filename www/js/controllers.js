@@ -17,6 +17,17 @@ angular.module('tapGame.controllers', ['ionic'])
 			}
 		});
 	};
+
+  vm.signIn = function(email, password) {
+    $http({
+      url : 'http://fierce-bastion-88682.herokuapp.com/users/signin',
+      method : 'POST',
+      data : {
+        "email" : email,
+        "password" : password 
+      }
+    });
+  };
 })
 
 .controller('GameCtrl', function($scope, $http) {

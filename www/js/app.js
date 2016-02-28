@@ -62,6 +62,13 @@ angular.module('tapGame', ['ionic', 'tapGame.controllers', 'tapGame.services'])
     controller: 'GameCtrl',
     controllerAs: 'GC'
 
+  })
+  .state('signIn', {
+    url: '/signIn',
+    templateUrl: 'templates/signIn.html',
+    controller: 'MainCtrl',
+    controllerAs: 'MC'
+
   });
 
 
