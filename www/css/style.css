@@ -49,6 +49,9 @@ a {
 .play {
 	color: rgb(242, 201, 0);
 }
+.back {
+	margin-top: 1rem;
+}
 .button {
 	font-family: "Press Start 2P";
 	font-size: .5rem
