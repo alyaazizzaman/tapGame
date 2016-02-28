@@ -8,7 +8,7 @@ angular.module('tapGame.controllers', ['ionic'])
 
 	vm.signUp = function(userName, email, password) {
 		$http({
-			url : 'http://localhost:3000/users',
+			url : 'http://fierce-bastion-88682.herokuapp.com/users',
 			method: 'POST',
 			data : {
 				"user_name" : userName,
@@ -25,7 +25,7 @@ angular.module('tapGame.controllers', ['ionic'])
   vm.getHighScores = function(){
     $http({
       method: 'GET',
-      url: 'http://localhost:3000/users/highscores'
+      url: 'http://fierce-bastion-88682.herokuapp.com/users/highscores'
     }).then(function successCallback(response) {
       console.log(response.data);
       vm.highscores = response.data;
