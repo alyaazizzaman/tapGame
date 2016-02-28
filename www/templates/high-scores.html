@@ -1,4 +1,4 @@
-<div class='homescreen row'>
+<div class='homescreen row' ng-init='GC.getHighScores()'>
   <div class='col'>
   </div>
 
@@ -7,45 +7,9 @@
     <h2 class="scoreTitle">High Scores</h2>
     <br></br>
     <!--fake scores -->
-    <div class="row">
-      <div class="scores col">AAZ</div>
-      <div class="scores col">100</div>
-    </div>
-    <div class="row">
-      <div class="scores col">AAZ</div>
-      <div class="scores col">100</div>
-    </div>
-    <div class="row">
-      <div class="scores col">AAZ</div>
-      <div class="scores col">100</div>
-    </div>
-    <div class="row">
-      <div class="scores col">AAZ</div>
-      <div class="scores col">100</div>
-    </div>
-    <div class="row">
-      <div class="scores col">AAZ</div>
-      <div class="scores col">100</div>
-    </div>
-    <div class="row">
-      <div class="scores col">AAZ</div>
-      <div class="scores col">100</div>
-    </div>
-    <div class="row">
-      <div class="scores col">AAZ</div>
-      <div class="scores col">100</div>
-    </div>
-    <div class="row">
-      <div class="scores col">AAZ</div>
-      <div class="scores col">100</div>
-    </div>
-    <div class="row">
-      <div class="scores col">AAZ</div>
-      <div class="scores col">100</div>
-    </div>
-    <div class="row">
-      <div class="scores col">AAZ</div>
-      <div class="scores col">100</div>
+    <div ng-repeat="row in GC.highscores track by $index" class="row">
+      <div class="scores col">{{row.user_name}}</div>
+      <div class="scores col">{{row.high_score}}</div>
     </div>
 
 
