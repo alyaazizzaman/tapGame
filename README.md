@@ -1,5 +1,5 @@
-<div style="text-align: center;">![Alt tag](http://www.jeremyroelfs.com/blog/wp-content/uploads/2016/02/Screen-Shot-2016-02-29-at-1.48.48-PM.png)</div>
 <h2 style="text-align: center;">Apoc-A-Flop</h2>
+![Alt tag](http://www.jeremyroelfs.com/blog/wp-content/uploads/2016/02/Screen-Shot-2016-02-29-at-1.48.48-PM.png)
 <h4 style="text-align:center;">A fun game created with Ionic.io and Phaser.js</h4>
 
 <hr/>
