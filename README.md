@@ -3,7 +3,7 @@
 
 <hr/>
 <h4>Description:</h4>
-<p>This Flappy Bird clone utilizes web technologies and implements them with the Ionic platform. Made for iOS, Apoc-A-Flop is a challenging game that is simple enough for all ages.</p>
+<p>This game takes the original Flappy Bird and places him in a post-apocalyptic world. It utilizes web technologies and implements them with the Ionic platform. Made for iOS, ApocaFlop is a challenging game that is simple enough for all ages. </p>
 
 <hr/>
 <h4>Technologies:</h4>
