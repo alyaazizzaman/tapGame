@@ -4,7 +4,7 @@
 
 <hr/>
 <h4>Description:</h4>
-<p>This Flappy Bird clone utilizes web technoliges and implements them with the Ionic platform. Made for iOS, Apoc-A-Flop is a fun to play game that is simple for all ages.</p>
+<p>This Flappy Bird clone utilizes web technologies and implements them with the Ionic platform. Made for iOS, Apoc-A-Flop is a fun to play game that is simple for all ages.</p>
 
 <hr/>
 <h4>Technologies:</h4>
