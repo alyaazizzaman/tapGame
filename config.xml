@@ -19,11 +19,11 @@
   <feature name="StatusBar">
     <param name="ios-package" value="CDVStatusBar" onload="true"/>
   </feature>
-</widget>
-
-<platform name="ios">
+  <platform name="ios">
     <icon src="icons/apocaflop-32.png" width="32" height="32" />
     <icon src="icons/apocaflop-64.png" width="64" height="64" />
     <icon src="icons/apocaflop-128.png" width="128" height="128" />
 
 </platform>
+</widget>
+
