@@ -155,7 +155,7 @@ function create() {
     game.input.maxPointers = 1;
 
     background = game.add.sprite(0,0, "background");
-    background.width = screen.width;
+    background.width = window.innerWidth;
 
 
     walls = game.add.group();
