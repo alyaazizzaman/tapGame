@@ -8,7 +8,7 @@ angular.module('tapGame.controllers', ['ionic'])
 
 	vm.signUp = function(userName, email, password) {
     $http({
-			url : 'http://localhost:3000/users', //http://fierce-bastion-88682.herokuapp.com
+			url : 'http://fierce-bastion-88682.herokuapp.com/users', //http://fierce-bastion-88682.herokuapp.com
 			method: 'POST',
 			data : {
 				"user_name" : userName,
@@ -24,11 +24,11 @@ angular.module('tapGame.controllers', ['ionic'])
   vm.signIn = function(email, password) {
     console.log(email, password);
     $http({
-      url : 'http://localhost:3000/users/signin', //http://fierce-bastion-88682.herokuapp.com
+      url : 'http://fierce-bastion-88682.herokuapp.com/signin', //http://fierce-bastion-88682.herokuapp.com
       method : 'POST',
       data : {
         "email" : email,
-        "password" : password 
+        "password" : password
       }
     }).then(function(token){
       console.log(token);
