@@ -15,7 +15,7 @@ a {
 }
 
 .homescreen {
-	background-image: url('../img/bg.png');
+	background-image: url('../assets/background.png');
 	background-repeat: no-repeat;
 	background-size: cover;
 	/*background-color: red;*/
@@ -24,7 +24,7 @@ a {
 .title {
 	font-family: 'KarmaFuture';
 	color: white;
-	font-size: 3.5rem;
+	font-size: 3.25rem;
 }
 
 .scoreTitle {

@@ -7,36 +7,44 @@ angular.module('tapGame.controllers', ['ionic'])
 	var vm = this;
 
 	vm.signUp = function(userName, email, password) {
-		$http({
-			url : 'http://fierce-bastion-88682.herokuapp.com/users',
+    $http({
+			url : 'http://localhost:3000/users', //http://fierce-bastion-88682.herokuapp.com
 			method: 'POST',
 			data : {
 				"user_name" : userName,
 				"email" : email,
 				"password" : password
 			}
-		});
+		}).then(function(token){
+      console.log(token);
+    });
+
 	};
 
   vm.signIn = function(email, password) {
+    console.log(email, password);
     $http({
-      url : 'http://fierce-bastion-88682.herokuapp.com/users/signin',
+      url : 'http://localhost:3000/users/signin', //http://fierce-bastion-88682.herokuapp.com
       method : 'POST',
       data : {
         "email" : email,
         "password" : password 
       }
+    }).then(function(token){
+      console.log(token);
     });
   };
 })
 
-.controller('GameCtrl', function($scope, $http) {
+.controller('GameCtrl', function($scope, $http, $location) {
   var vm = this;
+
+  vm.userScore = $location.search().score;
 
   vm.getHighScores = function(){
     $http({
       method: 'GET',
-      url: 'http://fierce-bastion-88682.herokuapp.com/users/highscores'
+      url: 'http://localhost:3000/users/highscores' //http://fierce-bastion-88682.herokuapp.com
     }).then(function successCallback(response) {
       console.log(response.data);
       vm.highscores = response.data;

@@ -1,28 +1,72 @@
-//DEFAULT COLOR: 0f3d15
 
-var game = new Phaser.Game(400, 490, Phaser.AUTO, 'tap-game');
 
+var player;
+var walls;
+var background;
+var labelScore;
+var score = 0;
+var wallTimer;
+
+var wingSound;
+var swooshSound;
+var scoreSound;
+var dieSound;
+var pauseLabel;
+var menu;
+var resume;
+var restart;
+var highScores;
+var exit;
+var gameOver = false;
+var scaleRatio;
+var background;
+
+//GAME VARIABLES
+var GRAVITY = 70;
+var OPENING = 140;
+var SPAWN_RATE = 1.50;
+var SPEED = 150;
+
+
+
+var game = new Phaser.Game(320, 460, Phaser.AUTO, 'tap-game');
+
+//Setup our games main state, this is the base functionality structure
+//for phaser. Each "level" will go through this process of
+//preload, create, update, render...
+// **Note that the render function is for displaying debugging information
+//so we don't need it
 var mainState = { 
         
         preload: preload, 
         create: create, 
         update: update
+        //render: render
     };
 
     game.state.add('main', mainState);  
     game.state.start('main');  
 
+
+//Our preload handles gathering and loading our assets that we will
+//use in the game.
+//For our purpose, we call scaleStage immediately to dynamically 
+//set the screen resolution. Phaser doesn't have a good way to handle
+//mobile resolutions so this is a giant hack.
 function preload() {
 
     scaleStage();
 
+    //Load World assets
     game.load.image('background', 'assets/background.png');
-    game.load.image('ground', 'assets/ground.png');
-    game.load.image('pipe', 'assets/pipe.png');
-    game.load.spritesheet('bird', 'assets/floppy.png', 48, 32);
+    //game.load.image('pipe', 'assets/pipe.png');
+    game.load.image('column', 'assets/column.png');
 
-    //Menu
-    game.load.image('pause', 'assets/pause.png');
+    //Load Player assets
+    game.load.spritesheet('bird', 'assets/floppy.png', 36, 24);
+
+    //Load Menu assets
+    game.load.spritesheet('pause', 'assets/pause.png', 32,32);
     game.load.image('restart', 'assets/restart-btn.png');
     game.load.image('highScores', 'assets/high-score-btn.png');
     game.load.image('exit', 'assets/exit-btn.png');
@@ -37,163 +81,177 @@ function preload() {
 }
 
 
-var scaleRatio = window.devicePixelRatio/3;
+//Use the scaleRatio to change the scaling of our sprites
+var scaleRatio = window.devicePixelRatio/2;
+
+//Scale Stage finds the window size and adjusts accordingly depending
+//on the resolution of the device we are displaying on.
 function scaleStage(){
     
+        // game.stage.disableVisibilityChange = true;
 
-        game.input.maxPointers = 1;
+        // var width = (window.innerWidth > 0) ? window.innerWidth: screen.width;
+        // var height = (window.innerHeight > 0) ? window.innerHeight: screen.height;
+        // game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
+        // game.scale.pageAlignHorizontally = true;            
+        // game.scale.pageAlignVertically = true;
+        // game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
+        // game.scale.width = width;
+        // game.scale.height = height;
+
+
+
         game.stage.disableVisibilityChange = true;
 
         var width = (window.innerWidth > 0) ? window.innerWidth: screen.width;
         var height = (window.innerHeight > 0) ? window.innerHeight: screen.height;
 
-        game.scale.minWidth = width;        
-        game.scale.minHeight = height;
 
+    // if (game.device.desktop)        
+    // {
+    //     game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
+    //     game.scale.pageAlignHorizontally = true;            
+    //     game.scale.pageAlignVertically = true;
+    //     game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
+    //     game.scale.width = width;
+    //     game.scale.height = height;
+        
+    // } else {
+        game.scale.scaleMode = Phaser.ScaleManager.SHOW_ALL;
+        game.scale.minWidth = 480;
+        game.scale.minHeight = 260;
+        game.scale.maxWidth = 1334;
+        game.scale.maxHeight = 750;
+        game.scale.width = width;
+        game.scale.height = height;
 
-    var ow = parseInt(game.canvas.style.width,10);
-    var oh = parseInt(game.canvas.style.height,10);
-    var r = Math.max(window.innerWidth/ow,window.innerHeight/oh);
-    var nw = ow*r;var nh = oh*r;
-    game.canvas.style.width = nw+"px";
-    game.canvas.style.height= nh+"px";
-    game.canvas.style.marginLeft = (window.innerWidth/2 - nw/2)+"px";
-    game.canvas.style.marginTop = (window.innerHeight/2 - nh/2)+"px";
-    document.getElementById("tap-game").style.width = window.innerWidth+"px";
-    document.getElementById("tap-game").style.height = window.innerHeight-1+"px";
+        game.scale.forceLandscape = true;
+        //game.scale.pageAlignHorizontally = true;
+        game.scale.pageAlignVertically = true;
+    // }
+
+    // var ow = parseInt(game.canvas.style.width,10);
+    // var oh = parseInt(game.canvas.style.height,10);
+    // var r = Math.max(window.innerWidth/ow,window.innerHeight/oh);
+    // var nw = ow*r;var nh = oh*r;
+    // game.canvas.style.width = nw+"px";
+    // game.canvas.style.height= nh+"px";
+    // game.canvas.style.marginLeft = (window.innerWidth/2 - nw/2)+"px";
+    // game.canvas.style.marginTop = (window.innerHeight/2 - nh/2)+"px";
+    // document.getElementById("tap-game").style.width = window.innerWidth+"px";
+    // document.getElementById("tap-game").style.height = window.innerHeight-1+"px";
 
     // //The css for body includes 1px top margin, I believe this is the cause for this -1
     // document.getElementById("tap-game").style.overflow = "hidden";
+
+
+
 }
 
 
-var player;
-var pipe;
-var pipes;
-var colNum;
-var background;
-var labelScore;
-var score = -1;
-var timer;
-var ground;
-var wingSound;
-var swooshSound;
-var pointSound;
-var dieSound;
-var pauseLabel;
-var menu;
-var resume;
-var restart;
-var highScores;
-var exit;
-var gameOver = false;
-
 function create() {
 
-    background = game.add.tileSprite(0, 0, 500, 500, 'background');
-    ground = game.add.tileSprite(0, game.height-75, 500, 500, "ground");
+    //Setup world assets and functionality
+    game.input.maxPointers = 1;
+    background = game.add.tileSprite(0,0,this.world.width, this.world.height, "background");
+    background = game.add.tileSprite(0,0,this.world.width, this.world.height, "background");
+    
 
+
+    walls = game.add.group();
+    //pipes = game.add.group(); // Create a group  
+    //pipes.enableBody = true;  // Add physics to the group  
+    //pipes.createMultiple(20, 'pipe'); // Create 20 pipes    
+
+    //Set up world physics - using arcade
     game.physics.startSystem(Phaser.Physics.ARCADE);
+    game.physics.arcade.gravity.y = GRAVITY; //  Set the world (global) gravity   
+    game.physics.startSystem(Phaser.Physics.ARCADE); // Set the physics system
 
-    //  Set the world (global) gravity
-    game.physics.arcade.gravity.y = 100;
 
-    //  Add a sprite
-    // Set the physics system
-    game.physics.startSystem(Phaser.Physics.ARCADE);
-
-    // Display the bird on the screen
+    //Setup Player
     player = game.add.sprite(game.width/2-100, game.height/2, 'bird');
     player.anchor.setTo(-0.2, 0.5); 
-    player.animations.add('bird',[0,1,2],10,true);
+    player.animations.add('flap',[0,1,2],10,true);
 
-    // Add gravity to the bird to make it fall
+
+    //Setup player physics
     game.physics.arcade.enable(player);
-    player.body.gravity.y = 1000;
-    pipes = game.add.group(); // Create a group  
-    pipes.enableBody = true;  // Add physics to the group  
-    pipes.createMultiple(20, 'pipe'); // Create 20 pipes     
-    player.animations.play('right');
+    player.body.gravity.y = 900;
+     
+    
+    player.animations.play('flap');
 
+
+    //Game Sounds
     wingSound = game.add.audio('wing');
     swooshSound = game.add.audio('swoosh');
-    pointSound = game.add.audio('point');  
+    scoreSound = game.add.audio('point');
     dieSound = game.add.audio('die');
 
-    timer = game.time.events.loop(1500, addRowOfPipes, this);
-    labelScore = game.add.text(game.width/2, 20, "0", { font: "30px Arial", fill: "#ffffff" }); 
+
+    //Pipe Timer
+    //timer = game.time.events.loop(1500, addRowOfPipes, this);
+    colTimer = game.time.events.loop(Phaser.Timer.SECOND * SPAWN_RATE, spawnWalls, this );
+    //this.colTimer.timer.start();
+    
+    //Our score at the top of the screen
+    labelScore = game.add.text(game.width/2, 15, "0", { font: "30px Arial", fill: "#ffffff" }); 
+
 
     //SETUP PAUSE
-    pauseLabel = game.add.sprite(game.width - 100, 20, 'pause');
+    pauseLabel = game.add.sprite(game.width - 40, 30, 'pause');
+    pauseLabel.anchor.setTo(0.5,0.5);
+    pauseLabel.animations.add('clickToPause',[0], 1, false);
+    pauseLabel.animations.add('clickToUnPause',[1], 1, true);
     pauseLabel.inputEnabled = true;
     pauseLabel.events.onInputUp.add(pause);
-    // Add a input listener that can help us return from being paused
-    game.input.onDown.add(unpause, self);
+
+    game.input.onDown.add(unpause, self);// Add a input listener for the pause button
 
 
-    //BUILD MENU
+    //Build Menu
     menu = game.add.group();
-
     var button2 = game.make.button(game.width/2-75, 150, 'restart', restartGame, this, 2, 1, 0, menu);  
     menu.add(button2);
     var button3 = game.make.button(game.width/2-75, 200, 'highScores', goToHighScores, this, 2, 1, 0, menu);
     menu.add(button3);
     var button4 = game.make.button(game.width/2-75, 250, 'exit', exitGame, this, 2, 1, 0, menu);
     menu.add(button4);
-
     menu.visible = false;
+
 
 }//END CREATE FUNCTION
 
 
-function addOnePipe(x, y) {  
-    // Get the first dead pipe of our group
-    var pipe = pipes.getFirstDead();
-
-    // Set the new position of the pipe
-    pipe.reset(x, y);
-
-    // Add velocity to the pipe to make it move left
-    pipe.body.velocity.x = -175; 
-
-    // Kill the pipe when it's no longer visible 
-    pipe.checkWorldBounds = true;
-    pipe.outOfBoundsKill = true;
-}
-
-function addRowOfPipes() {  
-    // Pick where the hole will be
-    var hole = Math.floor(Math.random() * 5) + 1;
-
-    // Add the 6 pipes 
-    for (var i = 0; i < 8; i++) {
-        if (i != hole && i != hole + 1) {
-            addOnePipe(400, i * 60 + 10);
-        }
-    }
-
-
-    score += 1;
-    if(score > 0){
-        labelScore.text = score;
-        pointSound.play();
-    }
-}
-
 
 function update() {
-    if(player.alive){
-            ground.tilePosition.x -= 2.8;
-    }
-
+   
+   
+   
+    //If player is in the world and our game is not over
     if (player.inWorld == false && gameOver == false)
     {    
         gameOver = true;
-        hitPipe();
+        hitPipe(); //Hit pipe is like our end of game funciton
         showMenu();
+        //background.autoScroll(0,0);
+    }else{
+        //background.autoScroll(-SPEED *.80,0);
     }
+    
 
-    game.physics.arcade.overlap(player, pipes, hitPipe, null, this);
+    walls.forEachAlive(function(wall){
+                if(wall.x + wall.width < game.world.bounds.left){
+                    wall.kill();
+                }else if(!wall.scored && wall.x <= player.x){
+                    addScore(wall);
+ 
+                }
+    })
+
+
+    game.physics.arcade.overlap(player, walls, hitPipe, null, this);
 
     if (player.angle < 20)  
     player.angle += 1;
@@ -202,8 +260,6 @@ function update() {
 
     //TAP
     game.input.onTap.add(onTap, this);
-
-    
 }
 
 
@@ -221,7 +277,7 @@ function onTap(pointer) {
 
 
 function hitPipe() {
-    console.log('HIT PIPE');
+
     // If the bird has already hit a pipe, we have nothing to do
     if (player.alive == false)
         return;
@@ -231,49 +287,89 @@ function hitPipe() {
     dieSound.play();
 
     // Prevent new pipes from appearing
-    game.time.events.remove(timer);
+    game.time.events.remove(colTimer);
 
     // Go through all the pipes, and stop their movement
-    pipes.forEachAlive(function(p){
+    walls.forEachAlive(function(p){
         p.body.velocity.x = 0;
     }, this);
-
-    //showMenu();
 
 }
 
 
 function showMenu(){
-    console.log("SHOWING MENU");
-    console.log(menu);
+    
+    //Added to prevent game from paused after dieing
+    if(game.paused){
+        game.paused = false;
+    }
+    
     menu.visible = true;
 }
 
-
 function pause(){
-    game.paused = true;
+    if(player.alive){
+        pauseLabel.animations.play('clickToUnPause');
+        game.paused = true;
+    } else {
+        return;
+    }
 }
 function unpause(){
+    pauseLabel.animations.play('clickToPause');
     game.paused = false;
 }
 
 
-
-
-
 function goToHighScores(){
     console.log('Going to High Scores');
+    document.location.href = "#/high-scores?score=" + score;
 }
 
 
 // Restart the game
 function restartGame(){
     gameOver = false;
+    score = 0;
     labelScore = 0;
-    score = -1;
     game.state.start('main');
-}
+};
 
 function exitGame(){
     console.log('Exit Game');
-}
+    document.location.href = "#/home";
+};
+
+
+function spawnWall(y, flipped){
+        var wall = walls.create(
+            game.width,
+            y + (flipped ? -OPENING : OPENING) / 2,
+            "column"
+        );
+ 
+        game.physics.arcade.enableBody(wall);
+        wall.body.allowGravity = false;
+        wall.scored = false;
+        wall.body.immovable = true;
+        wall.body.velocity.x = -SPEED;
+        if(flipped){
+            wall.scale.y = -1;
+            wall.body.offset.y  = -wall.body.height;
+        }
+ 
+        return wall;
+};
+function spawnWalls(){
+        var wallY = game.rnd.integerInRange(game.height *.3, game.height *.7);
+        var botWall = spawnWall(wallY);
+        var topWall = spawnWall(wallY, true);
+};
+function addScore(wall){
+        wall.scored = true;
+        score += 0.5;
+        labelScore.setText(score);
+        scoreSound.play();
+
+
+};
