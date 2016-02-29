@@ -153,9 +153,9 @@ function create() {
 
     //Setup world assets and functionality
     game.input.maxPointers = 1;
-    background = game.add.tileSprite(0,0,this.world.width, this.world.height, "background");
-    background = game.add.tileSprite(0,0,this.world.width, this.world.height, "background");
-    
+
+    background = game.add.sprite(0,0, "background");
+    background.width = screen.width;
 
 
     walls = game.add.group();
