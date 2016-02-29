@@ -15,7 +15,7 @@ a {
 }
 
 .homescreen {
-	background-image: url('../assets/background.png');
+	background-image: url('../img/backgroundapocalypse.png');
 	background-repeat: no-repeat;
 	background-size: cover;
 	/*background-color: red;*/
@@ -44,10 +44,11 @@ a {
 	color: white;
 }
 .birds {
-	width: 95%;
+	width: 50%;
+	margin-left: 2.5rem;
 }
 .play {
-	color: rgb(242, 201, 0);
+	color: rgb(96, 136, 78);
 }
 .back {
 	margin-top: 1rem;
