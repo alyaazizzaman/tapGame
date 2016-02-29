@@ -9,6 +9,10 @@ a {
 	text-decoration:none
 }
 
+h3 {
+	text-align: center;
+}
+
 .homeCol {
 	text-align: center;
 	vertical-align: middle;
