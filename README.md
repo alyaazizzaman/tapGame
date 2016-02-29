@@ -1,10 +1,9 @@
 <h2 style="text-align: center;">Apoc-A-Flop</h2>
 ![Alt tag](http://www.jeremyroelfs.com/blog/wp-content/uploads/2016/02/Screen-Shot-2016-02-29-at-1.48.48-PM.png)
-<h4 style="text-align:center;">A fun game created with Ionic.io and Phaser.js</h4>
 
 <hr/>
 <h4>Description:</h4>
-<p>This Flappy Bird clone utilizes web technologies and implements them with the Ionic platform. Made for iOS, Apoc-A-Flop is a fun to play game that is simple for all ages.</p>
+<p>This Flappy Bird clone utilizes web technologies and implements them with the Ionic platform. Made for iOS, Apoc-A-Flop is a challenging game that is simple enough for all ages.</p>
 
 <hr/>
 <h4>Technologies:</h4>
