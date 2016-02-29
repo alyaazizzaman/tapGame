@@ -2,17 +2,27 @@
   <div class='col'>
   </div>
   <div class="col-52 homecol">
+    <br></br>
+
     <h1 class="title">Sign In</h1>
 
     <div class="list">
-      <label class="item item-input item-stacked-label">
+      <!-- <label class="item item-input item-stacked-label">
         <span class="input-label scores">Email</span>
-        <input type="email" ng-model='MC.email' placeholder="Email">
+        <input type="email" ng-model='MC.email' >
       </label>
       <label class="item item-input item-stacked-label">
         <span class="input-label scores">Password</span>
-        <input type="password" ng-model='MC.password' placeholder="Password">
-      </label>
+        <input type="password" ng-model='MC.password'>
+      </label> -->
+      <div class="list list-inset">
+        <label class="item item-input">
+          <input type="email" ng-model='MC.email' placeholder="Email">
+        </label>
+        <label class="item item-input">
+          <input type="password" ng-model='MC.password' placeholder="Password">
+        </label>
+      </div>
       <a href='#/home'>
         <button ng-click='MC.signIn(MC.email, MC.password)' class="button button-block button-positive">
           Sign In
