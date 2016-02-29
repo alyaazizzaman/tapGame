@@ -1,12 +1,16 @@
 
 /***** Home Screen *****/
 
-html{
+html {
 	font-size: 16px;
 }
 
 a {
 	text-decoration:none
+}
+
+h3 {
+	text-align: center;
 }
 
 .homeCol {

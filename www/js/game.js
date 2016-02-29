@@ -73,10 +73,10 @@ function preload() {
     game.load.image('resume', 'assets/resume-btn.png');
 
     //Sounds
-    game.load.audio('wing', 'assets/sfx_wing.ogg');
-    game.load.audio('swoosh', 'assets/sfx_swooshing.ogg');
-    game.load.audio('point', 'assets/sfx_point.ogg');
-    game.load.audio('die', 'assets/sfx_die.ogg');
+    game.load.audio('wing', 'assets/sfx_wing.m4a');
+    game.load.audio('swoosh', 'assets/sfx_swooshing.m4a');
+    game.load.audio('point', 'assets/sfx_point.m4a');
+    game.load.audio('die', 'assets/sfx_die.m4a');
 
 }
 
@@ -153,9 +153,9 @@ function create() {
 
     //Setup world assets and functionality
     game.input.maxPointers = 1;
-    background = game.add.tileSprite(0,0,this.world.width, this.world.height, "background");
-    background = game.add.tileSprite(0,0,this.world.width, this.world.height, "background");
-    
+
+    background = game.add.sprite(0,0, "background");
+    background.width = window.innerWidth;
 
 
     walls = game.add.group();
