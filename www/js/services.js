@@ -1,50 +1,40 @@
-angular.module('tapGame.services', [])
+'use strict';
 
-.factory('gameStats', function() {
-  // Might use a resource here that returns a JSON array
+angular.module('tapGame')
+  .service('gameSrc', ['$http', gameSrc]);
 
-  // Some fake testing data
-  var chats = [{
-    id: 0,
-    name: 'Ben Sparrow',
-    lastText: 'You on your way?',
-    face: 'img/ben.png'
-  }, {
-    id: 1,
-    name: 'Max Lynx',
-    lastText: 'Hey, it\'s me',
-    face: 'img/max.png'
-  }, {
-    id: 2,
-    name: 'Adam Bradleyson',
-    lastText: 'I should buy a boat',
-    face: 'img/adam.jpg'
-  }, {
-    id: 3,
-    name: 'Perry Governor',
-    lastText: 'Look at my mukluks!',
-    face: 'img/perry.png'
-  }, {
-    id: 4,
-    name: 'Mike Harrington',
-    lastText: 'This is wicked good ice cream.',
-    face: 'img/mike.png'
-  }];
+function gameSrc($http) {
 
-  return {
-    all: function() {
-      return chats;
-    },
-    remove: function(chat) {
-      chats.splice(chats.indexOf(chat), 1);
-    },
-    get: function(chatId) {
-      for (var i = 0; i < chats.length; i++) {
-        if (chats[i].id === parseInt(chatId)) {
-          return chats[i];
-        }
+
+
+  this.signUp = function(userName, email, password) {
+    return $http({
+      url : 'http://localhost:3000/users', //http://fierce-bastion-88682.herokuapp.com
+      method: 'POST',
+      data : {
+        "user_name" : userName,
+        "email" : email,
+        "password" : password
       }
-      return null;
-    }
+    });
   };
-});
+ 
+
+  this.signIn = function(email, password) {
+    return $http({
+      url : 'http://localhost:3000/users/signin', //http://fierce-bastion-88682.herokuapp.com
+      method : 'POST',
+      data : {
+        "email" : email,
+        "password" : password
+      }
+    });
+  };
+
+  this.getHighScores = function(){
+    return $http({
+      method: 'GET',
+      url: 'http://localhost:3000/users/highscores' //http://fierce-bastion-88682.herokuapp.com
+    });
+  };
+}

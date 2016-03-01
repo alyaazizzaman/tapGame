@@ -5,7 +5,7 @@
 // the 2nd parameter is an array of 'requires'
 // 'starter.services' is found in services.js
 // 'starter.controllers' is found in controllers.js
-angular.module('tapGame', ['ionic', 'tapGame.controllers', 'tapGame.services'])
+angular.module('tapGame', ['ionic'])
 
 .run(function($ionicPlatform) {
   $ionicPlatform.ready(function() {
@@ -32,12 +32,12 @@ angular.module('tapGame', ['ionic', 'tapGame.controllers', 'tapGame.services'])
   $stateProvider
 
   // setup an abstract state for the tabs directive
-    .state('home', {
+  .state('home', {
 
-      url: '/home',
-      templateUrl: 'templates/home.html',
-      controller: 'MainCtrl',
-      controllerAs: 'MC'
+    url: '/home',
+    templateUrl: 'templates/home.html',
+    controller: 'MainCtrl',
+    controllerAs: 'MC'
   })
 
   // Each tab has its own nav history stack:
@@ -45,8 +45,8 @@ angular.module('tapGame', ['ionic', 'tapGame.controllers', 'tapGame.services'])
   .state('game', {
     url: '/game',
     templateUrl: 'templates/game.html',
-    controller: 'GameCtrl',
-    controllerAs : 'GC'
+    controller: 'MainCtrl',
+    controllerAs : 'MC'
   })
 
   .state('signUp', {
@@ -59,8 +59,8 @@ angular.module('tapGame', ['ionic', 'tapGame.controllers', 'tapGame.services'])
   .state('high-scores', {
     url: '/high-scores',
     templateUrl: 'templates/high-scores.html',
-    controller: 'GameCtrl',
-    controllerAs: 'GC'
+    controller: 'MainCtrl',
+    controllerAs: 'MC'
 
   })
   .state('signIn', {

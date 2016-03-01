@@ -1,4 +1,4 @@
-<div class='homescreen row' ng-init='GC.getHighScores()'>
+<div class='homescreen row' ng-init='MC.getHighScores()'>
   <div class='col'>
     <a href='#/home'><i class="play back fa fa-arrow-circle-o-left fa-2x"></i></a>
   </div>
@@ -8,13 +8,13 @@
     <h2 class="scoreTitle">High Scores</h2>
     <br></br>
     <!--fake scores -->
-    <div ng-repeat="row in GC.highscores track by $index" class="row">
+    <div ng-repeat="row in MC.highScores track by $index" class="row">
       <div class="scores col">{{row.user_name}}</div>
       <div class="scores col">{{row.high_score}}</div>
     </div>
     <div>
       <a href='#/home'><button class="button button-full button-positive">
-        Submit Score of {{ GC.userScore }}
+        Submit Score of {{ MC.userScore }}
       </button></a>
 
     </div>

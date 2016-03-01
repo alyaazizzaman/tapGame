@@ -1,61 +1,45 @@
 'use strict';
 
-angular.module('tapGame.controllers', ['ionic'])
+angular.module('tapGame')
+  .controller('MainCtrl', ['gameSrc', MainCtrl]);
 
-.controller('MainCtrl', function($scope, $http) {
+function MainCtrl(gameSrc) {
 
 	var vm = this;
-
+  vm.user = {};
 	vm.signUp = function(userName, email, password) {
-    $http({
-			url : 'http://fierce-bastion-88682.herokuapp.com/users', //http://fierce-bastion-88682.herokuapp.com
-			method: 'POST',
-			data : {
-				"user_name" : userName,
-				"email" : email,
-				"password" : password
-			}
-		}).then(function(token){
-      console.log(token);
-    });
-
+    gameSrc
+      .signUp(userName, email, password)
+      .then(function(user){
+        console.log(user);
+      })
+      .catch(function(err){
+        console.log(err);
+      });
 	};
 
   vm.signIn = function(email, password) {
-    console.log(email, password);
-    $http({
-      url : 'http://fierce-bastion-88682.herokuapp.com/users/signin', //http://fierce-bastion-88682.herokuapp.com
-      method : 'POST',
-      data : {
-        "email" : email,
-        "password" : password
-      }
-    }).then(function(token){
-      console.log(token);
-    });
+    gameSrc
+      .signIn(email, password)
+      .then(function(user) {
+        console.log(user);
+        vm.user = user;
+        vm.user = user;
+      })
+      .catch(function(err) {
+        console.log(err);
+      });
   };
-})
 
-.controller('GameCtrl', function($scope, $http, $location) {
-  var vm = this;
-
-  vm.userScore = $location.search().score;
+  // vm.userScore = $location.search().score;
 
   vm.getHighScores = function(){
-    $http({
-      method: 'GET',
-      url: 'http://fierce-bastion-88682.herokuapp.com/users/highscores' //http://fierce-bastion-88682.herokuapp.com
-    }).then(function successCallback(response) {
-      console.log(response.data);
-      vm.highscores = response.data;
-      // this callback will be called asynchronously
-      // when the response is available
-    }, function errorCallback(response) {
-      // called asynchronously if an error occurs
-      // or server returns response with an error status.
-    });
+    gameSrc
+      .getHighScores()
+      .then(function(response) {
+        vm.highScores = response.data;
+      });
   };
 
-  vm.highscores;
 
-});
+};
