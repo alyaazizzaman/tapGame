@@ -37,4 +37,24 @@ function gameSrc($http) {
       url: 'http://localhost:3000/users/highscores' //http://fierce-bastion-88682.herokuapp.com
     });
   };
+
+  this.submitScore = function(id, score) {
+
+    var config = {
+      method: 'PUT',
+      url: 'http://localhost:3000/users/' + id,
+      data: {
+        high_score: score
+      }
+    };
+
+    config.headers = {};
+    
+    if ($window.sessionStorage.token) {
+      config.headers.Authorization = 'Bearer ' + $window.sessionStorage.token;
+    }
+
+    return $http(config);
+  };
+
 }

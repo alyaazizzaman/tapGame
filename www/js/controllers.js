@@ -1,13 +1,16 @@
 'use strict';
 
 angular.module('tapGame')
-  .controller('MainCtrl', ['gameSrc', MainCtrl]);
+  .controller('MainCtrl', ['gameSrc', '$window', '$location', MainCtrl]);
 
-function MainCtrl(gameSrc) {
+function MainCtrl( gameSrc, $window, $location) {
 
 	var vm = this;
-
-  vm.user = {};
+  vm.userScore = $location.search().score;
+  //trying to reset after every new game.
+  $location.search().score = 0;
+  $window.sessionStorage = {};
+  $window.sessionStorage.id = null;
 
 	vm.signUp = function(userName, email, password) {
     gameSrc
@@ -25,17 +28,18 @@ function MainCtrl(gameSrc) {
     gameSrc
       .signIn(email, password)
       .then(function(user) {
-        vm.user.token = user.data.token;
-        vm.user.id = user.data.user.id;
+        $window.sessionStorage.token = user.data.token;
+        $window.sessionStorage.id = user.data.user.id;
       })
       .catch(function(err) {
         console.log(err);
       });
   };
 
-  // vm.userScore = $location.search().score;
-
+ 
+ 
   vm.getHighScores = function(){
+    console.log($window.sessionStorage.token);
     gameSrc
       .getHighScores()
       .then(function(response) {
@@ -43,5 +47,12 @@ function MainCtrl(gameSrc) {
       });
   };
 
+  vm.submitScore = function(id) {
+    gameSrc
+      .submitScore(id, vm.userScore)
+      .then(function(response){
+        console.log(response);
+      });
+  };
 
-};
+}
